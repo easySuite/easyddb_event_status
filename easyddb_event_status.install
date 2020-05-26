@@ -1,0 +1,67 @@
+<?php
+
+/**
+ * @file
+ * Installation routine.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function easyddb_event_status_install() {
+  // Create fieldgroup.
+  $field_group = (object) [
+    'identifier' => 'group_ding_event_status|node|ding_event|form',
+    'group_name' => 'group_ding_event_status',
+    'entity_type' => 'node',
+    'bundle' => 'ding_event',
+    'mode' => 'form',
+    'parent_name' => 'group_ding_event_date_loc_price',
+    'label' => 'Event status',
+    'weight' => '12',
+    'children' => [
+      'field_ding_event_status_label',
+      'field_ding_event_status_color',
+    ],
+    'format_type' => 'fieldset',
+    'format_settings' => [
+      'formatter' => 'collapsible',
+      'instance_settings' => [
+        'description' => '',
+        'classes' => 'group-ding-event-status field-group-fieldset',
+        'required_fields' => 1,
+        'id' => '',
+      ],
+    ],
+  ];
+  field_group_group_save($field_group);
+  ctools_include('export');
+  ctools_export_crud_enable('field_group', $field_group->identifier);
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function easyddb_event_status_uninstall() {
+  // Remove fields.
+  $fields = [
+    'field_ding_event_status_label',
+    'field_ding_event_status_color',
+  ];
+
+  foreach ($fields as $field) {
+    $field_instance = field_info_instance('node', $field, 'ding_event');
+    field_delete_instance($field_instance);
+    field_delete_field($field);
+  }
+
+  // Remove fieldgroup.
+  $group_name = 'group_ding_event_status';
+  $entity_type = 'node';
+  $bundle_name = 'ding_event';
+  $mode = 'form';
+  if ($group = field_group_load_field_group($group_name, $entity_type, $bundle_name, $mode)) {
+    ctools_include('export');
+    field_group_group_export_delete($group, FALSE);
+  }
+}

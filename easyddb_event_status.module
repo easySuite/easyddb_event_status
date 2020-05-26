@@ -1,0 +1,67 @@
+<?php
+
+/**
+ * @file
+ * Module functionality routine.
+ */
+include_once 'easyddb_event_status.features.inc';
+
+/**
+ * Implements hook_form_BASE_FORM_ID_alter().
+ */
+function easyddb_event_status_form_ding_event_node_form_alter(&$form, &$form_state, $form_id) {
+  $color_value = $form['field_ding_event_status_color'][LANGUAGE_NONE][0]['value']['#default_value'];
+
+  $form['field_ding_event_status_color'][LANGUAGE_NONE][0]['value']['#attached']['library'][] = ['system', 'farbtastic'];
+  $form['field_ding_event_status_color'][LANGUAGE_NONE][0]['value']['#attached']['js'][] = drupal_get_path('module', 'easyddb_event_status') . '/js/easyddb_event_status.form.js';
+  $form['field_ding_event_status_color'][LANGUAGE_NONE][0]['value']['#default_value'] = !empty($color_value) ? $color_value : '#fc0000';
+  $form['field_ding_event_status_color'][LANGUAGE_NONE][0]['value']['#attributes']['class'][] = 'easyddb-event-status-color';
+  $form['field_ding_event_status_color'][LANGUAGE_NONE][0]['value']['#attributes']['data-type'][] = 'color';
+  $form['field_ding_event_status_color'][LANGUAGE_NONE][0]['value']['#suffix'] = '<div class="easyddb-event-status-colorpicker easyddb-event-status-color-colorpicker"></div>';
+  $form['field_ding_event_status_color'][LANGUAGE_NONE][0]['value']['#size'] = 8;
+  $form['field_ding_event_status_color'][LANGUAGE_NONE][0]['value']['#maxlength'] = 8;
+}
+
+/**
+ * Implements hook_preprocess_HOOK().
+ */
+function easyddb_event_status_preprocess_node(&$variables) {
+  if ($variables['type'] == 'ding_event') {
+    $field = field_get_items('node', $variables['node'], 'field_ding_event_status_label');
+    if (empty($field)) {
+      return;
+    }
+    $status_label = field_view_value('node', $variables['node'], 'field_ding_event_status_label', $field[0]);
+
+    if (!empty($status_label)) {
+      $color_field = field_get_items('node', $variables['node'], 'field_ding_event_status_color');
+      $status_color = field_view_value('node', $variables['node'], 'field_ding_event_status_color', $color_field[0]);
+
+      $variables['attributes_array'] = [
+        'data-ribbon-label' => $status_label['#markup'],
+        'data-ribbon-color' => $status_color['#markup'],
+      ];
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess().
+ */
+function easyddb_event_status_preprocess(&$variables, $hook) {
+  if (strpos($hook, 'ding_nodelist.ding_event.') !== FALSE) {
+    $item = $variables['item'];
+    if ($item->type == 'ding_event') {
+      $label = $item->field_ding_event_status_label[LANGUAGE_NONE][0]['value'];
+
+      if ($label) {
+        $color = $item->field_ding_event_status_color[LANGUAGE_NONE][0]['value'];
+
+        $variables['attributes_array'] = [
+          'data-ribbon-label' => $label,
+          'data-ribbon-color' => $color,
+        ];
+      }
+    }
+  }
+}
