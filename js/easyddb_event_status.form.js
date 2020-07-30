@@ -13,8 +13,8 @@
       });
 
       $('.easyddb-event-status-color', context).on('focus', function() {
-        let edit_field = this;
-        let picker = $(edit_field).closest('div').parent().find('.easyddb-event-status-color-colorpicker');
+        var edit_field = this;
+        var picker = $(edit_field).closest('div').parent().find('.easyddb-event-status-color-colorpicker');
 
         $(picker).show();
         $.farbtastic(picker, function(color) {
