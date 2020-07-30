@@ -6,38 +6,40 @@
   "use strict";
   Drupal.behaviors.easyddb_event_status_view = {
     attach: function (context) {
-      let ribbonMarkup = function (label, color, xPos = 'right', yPos = 'top') {
+      function ribbonMarkup(label, color, xPos, yPos) {
+        xPos = xPos || 'right';
+        yPos = yPos || 'top';
         return '<div class="ribbon ribbon-' + yPos + '-' + xPos + '"><span style="background-color: ' + color + '">' + label + '</span></div>';
-      };
+      }
 
-      let badgeMarkup = function (label, color) {
+      function badgeMarkup(label, color) {
         return "<div class='badge' style='background-color: " + color + "'><span>" + label + "</span></div>";
-      };
+      }
 
       // Event teasers.
-      let eventTeasers = $('article.node-ding-event.node-teaser', context);
+      var eventTeasers = $('article.node-ding-event.node-teaser', context);
       eventTeasers.each(function (key, data) {
-        let ribbonLabel = $(data).data('ribbon-label');
-        let ribbonColor = $(data).data('ribbon-color');
+        var ribbonLabel = $(data).data('ribbon-label');
+        var ribbonColor = $(data).data('ribbon-color');
         if (ribbonLabel !== undefined) {
           $(data).append(ribbonMarkup(ribbonLabel, ribbonColor));
         }
       });
 
       // Event node.
-      let eventNode = $('article.node-ding-event.node-full', context);
+      var eventNode = $('article.node-ding-event.node-full', context);
       if (eventNode.length !== 0) {
-        let nodeImage = $('.field-name-field-ding-event-title-image .field-item img', context);
+        var nodeImage = $('.field-name-field-ding-event-title-image .field-item img', context);
 
-        let nodeFullLabel = $(eventNode).data('ribbon-label');
-        let nodeFullColor = $(eventNode).data('ribbon-color');
+        var nodeFullLabel = $(eventNode).data('ribbon-label');
+        var nodeFullColor = $(eventNode).data('ribbon-color');
         if (nodeFullLabel !== undefined) {
           $(ribbonMarkup(nodeFullLabel, nodeFullColor, 'left')).insertBefore(nodeImage).attr('style', 'display: block; margin-top: -10px; margin-left: -10px');
         }
       }
 
       /* Nodelist displays */
-      let nodelistDisplays = [
+      var nodelistDisplays = [
         {
           'name': 'grid_images',
           'selector': '.grid-images-event-item',
@@ -91,8 +93,8 @@
 
       nodelistDisplays.forEach(function (value) {
         $(value.selector, context).each(function (key, data) {
-          let label = $(data).data('ribbon-label');
-          let color = $(data).data('ribbon-color');
+          var label = $(data).data('ribbon-label');
+          var color = $(data).data('ribbon-color');
 
           if (label !== undefined) {
             if (value.name === 'grid_images') {
