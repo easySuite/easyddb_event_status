@@ -52,15 +52,16 @@ function easyddb_event_status_preprocess(&$variables, $hook) {
   if (strpos($hook, 'ding_nodelist.ding_event.') !== FALSE) {
     $item = $variables['item'];
     if ($item->type == 'ding_event') {
-      $label = $item->field_ding_event_status_label[LANGUAGE_NONE][0]['value'];
+      if (isset($item->field_ding_event_status_label[LANGUAGE_NONE])) {
+        $label = $item->field_ding_event_status_label[LANGUAGE_NONE][0]['value'];
+        if ($label) {
+          $color = $item->field_ding_event_status_color[LANGUAGE_NONE][0]['value'];
 
-      if ($label) {
-        $color = $item->field_ding_event_status_color[LANGUAGE_NONE][0]['value'];
-
-        $variables['attributes_array'] = [
-          'data-ribbon-label' => $label,
-          'data-ribbon-color' => $color,
-        ];
+          $variables['attributes_array'] = [
+            'data-ribbon-label' => $label,
+            'data-ribbon-color' => $color,
+          ];
+        }
       }
     }
   }
