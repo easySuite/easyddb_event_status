@@ -12,7 +12,10 @@ include_once 'easyddb_event_status.features.inc';
 function easyddb_event_status_form_ding_event_node_form_alter(&$form, &$form_state, $form_id) {
   $color_value = $form['field_ding_event_status_color'][LANGUAGE_NONE][0]['value']['#default_value'];
 
-  $form['field_ding_event_status_color'][LANGUAGE_NONE][0]['value']['#attached']['library'][] = ['system', 'farbtastic'];
+  $form['field_ding_event_status_color'][LANGUAGE_NONE][0]['value']['#attached']['library'][] = [
+    'system',
+    'farbtastic',
+  ];
   $form['field_ding_event_status_color'][LANGUAGE_NONE][0]['value']['#attached']['js'][] = drupal_get_path('module', 'easyddb_event_status') . '/js/easyddb_event_status.form.js';
   $form['field_ding_event_status_color'][LANGUAGE_NONE][0]['value']['#default_value'] = !empty($color_value) ? $color_value : '#fc0000';
   $form['field_ding_event_status_color'][LANGUAGE_NONE][0]['value']['#attributes']['class'][] = 'easyddb-event-status-color';
@@ -51,18 +54,12 @@ function easyddb_event_status_preprocess_node(&$variables) {
 function easyddb_event_status_preprocess(&$variables, $hook) {
   if (strpos($hook, 'ding_nodelist.ding_event.') !== FALSE) {
     $item = $variables['item'];
-    if ($item->type == 'ding_event') {
-      if (isset($item->field_ding_event_status_label[LANGUAGE_NONE])) {
-        $label = $item->field_ding_event_status_label[LANGUAGE_NONE][0]['value'];
-        if ($label) {
-          $color = $item->field_ding_event_status_color[LANGUAGE_NONE][0]['value'];
-
-          $variables['attributes_array'] = [
-            'data-ribbon-label' => $label,
-            'data-ribbon-color' => $color,
-          ];
-        }
-      }
+    if ($item->type == 'ding_event' && $label = field_get_items('node', $item, 'field_ding_event_status_label')[0]['value'] ?? FALSE) {
+      $color = $item->field_ding_event_status_color[LANGUAGE_NONE][0]['value'];
+      $variables['attributes_array'] = [
+        'data-ribbon-label' => $label,
+        'data-ribbon-color' => $color,
+      ];
     }
   }
 }
