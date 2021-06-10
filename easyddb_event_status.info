@@ -1,7 +1,7 @@
 name = easyDDB Event Status
 description = "Status" display on Event CTs
 core = 7.x
-release = 7.x-6.1.0
+release = 7.x-6.2.1
 package = easyOPAC
 dependencies[] = ctools
 dependencies[] = ding_event
